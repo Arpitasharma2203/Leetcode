@@ -1,45 +1,29 @@
 class Solution {
+    class Result {
+        int height;
+        TreeNode node;
+        Result(int h, TreeNode n) {
+            height = h;
+            node = n;
+        }
+    }
+
+    private Result dfs(TreeNode node) {
+        if (node == null) return new Result(0, null);
+        
+        Result left = dfs(node.left);
+        Result right = dfs(node.right);
+        
+        if (left.height > right.height) {
+            return new Result(left.height + 1, left.node);
+        } else if (right.height > left.height) {
+            return new Result(right.height + 1, right.node);
+        } else {
+            return new Result(left.height + 1, node);
+        }
+    }
+
     public TreeNode subtreeWithAllDeepest(TreeNode root) {
-        if (root == null) return null;
-
-        Map<TreeNode, TreeNode> parent = new HashMap<>();
-        Queue<TreeNode> q = new LinkedList<>();
-        q.offer(root);
-        parent.put(root, null);
-
-        List<TreeNode> lastLevel = new ArrayList<>();
-
-        // BFS traversal
-        while (!q.isEmpty()) {
-            int size = q.size();
-            lastLevel.clear();
-
-            for (int i = 0; i < size; i++) {
-                TreeNode node = q.poll();
-                lastLevel.add(node);
-
-                if (node.left != null) {
-                    parent.put(node.left, node);
-                    q.offer(node.left);
-                }
-                if (node.right != null) {
-                    parent.put(node.right, node);
-                    q.offer(node.right);
-                }
-            }
-        }
-
-        Set<TreeNode> deepest = new HashSet<>(lastLevel);
-
-        // Move upward until all nodes converge
-        while (deepest.size() > 1) {
-            Set<TreeNode> next = new HashSet<>();
-            for (TreeNode node : deepest) {
-                next.add(parent.get(node));
-            }
-            deepest = next;
-        }
-
-        return deepest.iterator().next();
+        return dfs(root).node;
     }
 }
