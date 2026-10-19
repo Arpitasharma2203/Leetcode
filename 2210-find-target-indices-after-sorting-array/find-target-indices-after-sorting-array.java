@@ -1,14 +1,7 @@
 class Solution {
     public List<Integer> targetIndices(int[] nums, int target) {
-        Arrays.sort(nums);
-
-        List<Integer> ans = new ArrayList<>();
-
-        for(int i=0;i<nums.length;i++) {
-            if(nums[i] == target){
-                ans.add(i);
-            }
-        }
-        return ans;
+        int left = (int) Arrays.stream(nums).filter(x -> x < target).count();  // bisect_left: the values that come before the targets
+        int right = (int) Arrays.stream(nums).filter(x -> x <= target).count();  // bisect_right: the values up to the last target
+        return IntStream.range(left, right).boxed().toList();
     }
 }
